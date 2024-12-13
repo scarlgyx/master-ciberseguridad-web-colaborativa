@@ -7,19 +7,20 @@ import play.mvc.Controller;
 
 public class PublicContentBase extends Controller {
 
-    private static int MIN_PASSWORD_LENGTH = 10;
+    private static final int MIN_PASSWORD_LENGTH = 10;
 
     public static void register(){
         render();
     }
 
     public static void processRegister(String username, String password, String passwordCheck, String type){
-        if (password.equals(passwordCheck) && validatePassword(password)){
+        if (isPasswordValid(password)) {
             User u = new User(username, HashUtils.getMd5(password), type, -1);
             u.save();
             registerComplete();
         }else {
-            flash.error("Password is not valid.");
+            flash.error("Password should be at least 10 characters.");
+            register();
         }
     }
 
@@ -27,7 +28,7 @@ public class PublicContentBase extends Controller {
         render();
     }
 
-    private static boolean validatePassword(String password){
-        return password.length() >= MIN_PASSWORD_LENGTH;
+    private static boolean isPasswordValid(String password) {
+        return password.length() >= 10;
     }
 }
